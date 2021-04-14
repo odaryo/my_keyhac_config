@@ -5,7 +5,6 @@ import datetime
 import pyauto
 from keyhac import *
 
-
 def configure(keymap):
 
     # --------------------------------------------------------------------
@@ -34,41 +33,39 @@ def configure(keymap):
     # --------------------------------------------------------------------
 
     # Simple key replacement
-    # keymap.replaceKey( "(240)", "RCtrl" )                  # Capslock -> RCtrl
+    #keymap.replaceKey( "Caps", "RCtrl" )  # Capslock -> RCtrl
 
     # 除外アプリの設定
     def is_gexe_target(window):
-        if window.getProcessName() in ("vcxsrv.exe"):
-            return False
+#        if window.getProcessName() in ("vcxsrv.exe"):
+#            return False
         return True
 
     # Global keymap which affects any windows
     if 1:
         keymap_global = keymap.defineWindowKeymap(check_func=is_gexe_target)
 
-        # カーソルキーのショートカット
-        keymap_global[ "LC-P" ] = "Up"                  # Move cursor up
-        keymap_global[ "LC-N" ] = "Down"                # Move cursor down
-        keymap_global[ "LC-L" ] = "Right"               # Move cursor right
-        keymap_global[ "LC-K" ] = "Left"                # Move cursor left
-        keymap_global[ "LC-J" ] = "Home"                # Move to beginning of line
-        keymap_global[ "LC-U" ] = "PageUp"
-        keymap_global[ "LC-M" ] = "PageDown"
-        keymap_global[ "LC-Semicolon" ] = "End"
+        # モディファイアキーごとに設定
+        for modifier in ("", "S-", "C-", "C-S-"):
+            # カーソルキーのショートカット
+            keymap_global[ modifier + "LA-P" ] = modifier + "Up"
+            keymap_global[ modifier + "LA-N" ] = modifier + "Down"
+            keymap_global[ modifier + "LA-L" ] = modifier + "Right"
+            keymap_global[ modifier + "LA-K" ] = modifier + "Left"
+            keymap_global[ modifier + "LA-J" ] = modifier + "Home"
+            keymap_global[ modifier + "LA-U" ] = modifier + "PageUp"
+            keymap_global[ modifier + "LA-M" ] = modifier + "PageDown"
+            keymap_global[ modifier + "LA-Semicolon" ] = modifier + "End"
 
-        # 選択肢たままカーソル移動
-        keymap_global[ "LC-LS-P" ] = "S-Up"
-        keymap_global[ "LC-LS-N" ] = "S-Down"
-        keymap_global[ "LC-LS-L" ] = "S-Right"
-        keymap_global[ "LC-LS-K" ] = "S-Left"
-        keymap_global[ "LC-LS-J" ] = "S-Home"
-        keymap_global[ "LC-LS-U" ] = "S-PageUp"
-        keymap_global[ "LC-LS-M" ] = "S-PageDown"
-        keymap_global[ "LC-LS-Semicolon" ] = "S-End"
+        # AltキーをMacのように英数/日本語切り替えに使用する
+        keymap_global["O-LAlt"] = lambda: keymap.getWindow().setImeStatus(0)    # 左Altキーを英数キーに設定
+        keymap_global["O-RAlt"] = lambda: keymap.getWindow().setImeStatus(1)    # 右Altキーをかなキーに設定
 
         # その他の操作
         keymap_global[ "LC-D" ] = "Delete"
+        keymap_global[ "LA-D" ] = "Delete"
         keymap_global[ "LC-I" ] = "S-End","C-X"  # 行末まで切り取り
+        keymap_global[ "LA-I" ] = "S-End","C-X"  # 行末まで切り取り
 
         # ワークスペース切り替え
         keymap_global[ "RA-Right" ] = "LW-LC-Right"
